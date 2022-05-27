@@ -11,6 +11,8 @@ public class AudioManager : MonoBehaviour
     [Header("Audio Clips")]
     [SerializeField] AudioClip[] buttonClickClips;
     [SerializeField] AudioClip[] enemyDeathSounds; // 0: Button, 1: Shields
+    [SerializeField] AudioClip powerupSFX;
+
 
 
     private void Start()
@@ -27,6 +29,8 @@ public class AudioManager : MonoBehaviour
         Button.OnButtonClicked += PlayButtonClick;
         Enemy.OnShieldDeath += EnemyShieldDeath;
         Enemy.OnButtonDeath += EnemyButtonDeath;
+        ExtraLifePowerUp.OnPowerupAquired += PlayPowerupSound;
+        ShieldPowerUp.OnPowerupAquired += PlayPowerupSound;
     }
 
     private void OnDisable()
@@ -34,6 +38,8 @@ public class AudioManager : MonoBehaviour
         Button.OnButtonClicked -= PlayButtonClick;
         Enemy.OnShieldDeath -= EnemyShieldDeath;
         Enemy.OnButtonDeath -= EnemyButtonDeath;
+        ExtraLifePowerUp.OnPowerupAquired -= PlayPowerupSound;
+        ShieldPowerUp.OnPowerupAquired -= PlayPowerupSound;
     }
 
     private void EnemyButtonDeath()
@@ -41,7 +47,7 @@ public class AudioManager : MonoBehaviour
         sfx.PlayOneShot(enemyDeathSounds[0]);
     }
 
-    private void EnemyShieldDeath()
+    private void EnemyShieldDeath(GameObject enemy)
     {
         sfx.pitch = UnityEngine.Random.Range(0.9f, 1.05f);
         sfx.PlayOneShot(enemyDeathSounds[1]);
@@ -56,6 +62,13 @@ public class AudioManager : MonoBehaviour
 
         sfx.PlayOneShot(clip);
     }
+
+    void PlayPowerupSound(float duration)
+    {
+        sfx.pitch = 1f;
+        sfx.PlayOneShot(powerupSFX);
+    }
+
     public IEnumerator StartFade(AudioSource audioSource, float duration, float targetVolume)
     {
         float currentTime = 0;

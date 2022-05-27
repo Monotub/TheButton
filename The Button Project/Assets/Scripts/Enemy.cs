@@ -18,8 +18,7 @@ public class Enemy : MonoBehaviour
 
 
     public static event Action<GameObject> OnEnemyDied;
-    public static event Action OnEnemyBounce;
-    public static event Action OnShieldDeath;
+    public static event Action<GameObject> OnShieldDeath;
     public static event Action OnButtonDeath;
 
 
@@ -58,7 +57,7 @@ public class Enemy : MonoBehaviour
     {
         deathByShieldVFX.Play();
         GameManager.Instance.IncreaseScore(100);
-        OnShieldDeath?.Invoke();
+        OnShieldDeath?.Invoke(gameObject);
 
         DeathStuff();
     }
@@ -76,10 +75,5 @@ public class Enemy : MonoBehaviour
     public void SetSpeed(float speed)
     {
         moveSpeed = speed;
-    }
-
-    public void EnemyBounce()
-    {
-        //OnEnemyBounce?.Invoke();
     }
 }

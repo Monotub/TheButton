@@ -2,6 +2,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {   
@@ -15,8 +16,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] Animator cameraAnim;
     [SerializeField] TMP_Text scoreText;
     [SerializeField] TMP_Text highScoreText;
-
-
+    [SerializeField] GameObject[] powerupShields;
 
     [Header("Gameplay Customization")]
     [SerializeField] int currentLives;
@@ -38,6 +38,16 @@ public class GameManager : MonoBehaviour
         //pausePanel.SetActive(false);
         currentLives = maxLives;
         mainMenuCanvas.enabled = true;
+    }
+
+    private void OnEnable()
+    {
+        ShieldPowerUp.OnPowerupAquired += ActivateShieldPowerup;
+    }
+
+    private void OnDisable()
+    {
+        ShieldPowerUp.OnPowerupAquired -= ActivateShieldPowerup;
     }
 
     private void Start()
@@ -146,5 +156,21 @@ public class GameManager : MonoBehaviour
 
         scoreText.text = score.ToString("n0");
         highScoreText.text = highScore.ToString("n0");
+    }
+
+    void ActivateShieldPowerup(float duration)
+    {
+        StartCoroutine(ShieldPowerup(duration));
+    }
+
+    public IEnumerator ShieldPowerup(float duration)
+    {
+        foreach (var shield in powerupShields)
+            shield.SetActive(true);
+
+        yield return new WaitForSeconds(duration);
+
+        foreach (var shield in powerupShields)
+            shield.SetActive(false);
     }
 }

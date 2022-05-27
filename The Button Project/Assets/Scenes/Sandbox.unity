@@ -1032,6 +1032,7 @@ MonoBehaviour:
   enemyDeathSounds:
   - {fileID: 8300000, guid: f1cb38feecb1d4a468aaec49ceabae54, type: 3}
   - {fileID: 8300000, guid: f638430c5e4851848bea6f504e1ea95e, type: 3}
+  powerupSFX: {fileID: 8300000, guid: a2212b1c019d6a346bb28c66cc3bd7c9, type: 3}
 --- !u!4 &53361668
 Transform:
   m_ObjectHideFlags: 0
@@ -24975,6 +24976,9 @@ MonoBehaviour:
   cameraAnim: {fileID: 2070140455}
   scoreText: {fileID: 541946322}
   highScoreText: {fileID: 102012120}
+  powerupShields:
+  - {fileID: 1293657961}
+  - {fileID: 1446423868}
   currentLives: 0
   maxLives: 20
 --- !u!4 &1546275589
