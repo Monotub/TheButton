@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DissolveOnDeath : MonoBehaviour
@@ -14,11 +12,11 @@ public class DissolveOnDeath : MonoBehaviour
 
     private void OnEnable()
     {
-        Enemy.onEnemyDied += onEnemyDeath;
+        Enemy.OnEnemyDied += onEnemyDeath;
     }
     private void OnDisable()
     {
-        Enemy.onEnemyDied -= onEnemyDeath;
+        Enemy.OnEnemyDied -= onEnemyDeath;
     }
 
     private void Awake()

@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System;
-using DG.Tweening;
 
 public class Button : MonoBehaviour
 {
@@ -16,16 +13,11 @@ public class Button : MonoBehaviour
     bool isMouseOverButton = false;
     Vector3 coreRestingPosition = new Vector3(0, 1.6f, 0);
     Vector3 coreDownPosition = new Vector3(0, 1.25f, 0);
-    AudioSource audioSource;
 
+    public static event Action OnLeftButtonHeld;
+    public static event Action OnRightButtonHeld;
+    public static event Action OnButtonClicked;
 
-    public static event Action onLeftButtonHeld;
-    public static event Action onRightButtonHeld;
-
-    private void Awake()
-    {
-        audioSource = GetComponent<AudioSource>();
-    }
 
     private void Update()
     {
@@ -38,20 +30,23 @@ public class Button : MonoBehaviour
                 ProcessMouseRelease();
         }
     }
+    private void OnMouseDown()
+    {
+        if(_buttonHeldTimer < clickThreshold)
+            OnButtonClicked?.Invoke();
+    }
 
     private void ProcessMouseClick(int value)
     {
-        if(!audioSource.isPlaying && !(_buttonHeldTimer*2 > clickThreshold))
-            audioSource.PlayOneShot(audioSource.clip);
         buttonCore.localPosition = coreDownPosition;
         _buttonHeldTimer += Time.deltaTime;
 
         if (_buttonHeldTimer > clickThreshold)
         {
             if(value == 0)
-                onLeftButtonHeld?.Invoke();
+                OnLeftButtonHeld?.Invoke();
             else if (value == 1)
-                onRightButtonHeld?.Invoke();
+                OnRightButtonHeld?.Invoke();
         }
     }
 

@@ -17,7 +17,11 @@ public class Enemy : MonoBehaviour
     float deathDelay = 1f;
 
 
-    public static event Action<GameObject> onEnemyDied;
+    public static event Action<GameObject> OnEnemyDied;
+    public static event Action OnEnemyBounce;
+    public static event Action OnShieldDeath;
+    public static event Action OnButtonDeath;
+
 
     private void Awake()
     {
@@ -44,6 +48,7 @@ public class Enemy : MonoBehaviour
     {
         GameManager.Instance.LowerHealth(1);
         deathByButtonVFX.Play();
+        OnButtonDeath?.Invoke();
 
         DeathStuff();
     }
@@ -53,13 +58,14 @@ public class Enemy : MonoBehaviour
     {
         deathByShieldVFX.Play();
         GameManager.Instance.IncreaseScore(100);
+        OnShieldDeath?.Invoke();
 
         DeathStuff();
     }
 
     private void DeathStuff()
     {
-        onEnemyDied.Invoke(gameObject);
+        OnEnemyDied.Invoke(gameObject);
         GetComponent<Collider>().enabled = false;
         agent.enabled = false;
         anim.SetBool("isRunning", false);
@@ -70,5 +76,10 @@ public class Enemy : MonoBehaviour
     public void SetSpeed(float speed)
     {
         moveSpeed = speed;
+    }
+
+    public void EnemyBounce()
+    {
+        //OnEnemyBounce?.Invoke();
     }
 }

@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using DG.Tweening;
 
 public class ShieldSpinner : MonoBehaviour
 {
@@ -21,8 +18,8 @@ public class ShieldSpinner : MonoBehaviour
 
     private void OnEnable()
     {
-        Button.onLeftButtonHeld += onLeftButtonHeld;
-        Button.onRightButtonHeld += onRightButtonHeld;
+        Button.OnLeftButtonHeld += onLeftButtonHeld;
+        Button.OnRightButtonHeld += onRightButtonHeld;
 
         _shieldDistance = _startDistance;
         _spinVector = new Vector3(0, _spinFactor, 0);
@@ -30,8 +27,8 @@ public class ShieldSpinner : MonoBehaviour
 
     private void OnDisable()
     {
-        Button.onLeftButtonHeld -= onLeftButtonHeld;
-        Button.onRightButtonHeld -= onRightButtonHeld;
+        Button.OnLeftButtonHeld -= onLeftButtonHeld;
+        Button.OnRightButtonHeld -= onRightButtonHeld;
     }
 
     void Update()
