@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] Canvas mainMenuCanvas;
     [SerializeField] GameObject gameUICanvas;
     [SerializeField] OptionsMenu optionsMenu;
+    [SerializeField] GameObject gameoverPanel;
     [SerializeField] AudioManager audioManager;
     [SerializeField] Image extraLivesPlus;
     [SerializeField] Image lifePips;
@@ -18,8 +19,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] Animator cameraAnim;
     [SerializeField] TMP_Text scoreText;
     [SerializeField] TMP_Text highScoreText;
-    [SerializeField] GameObject[] powerupShields;
     [SerializeField] TMP_Text buffText;
+    [SerializeField] GameObject[] powerupShields;
 
     [Header("Gameplay Customization")]
     [SerializeField] int currentLives;
@@ -167,9 +168,13 @@ public class GameManager : MonoBehaviour
     {
         if (currentLives <= 0)
         {
-            // TODO: Add Gameover Screen here
-            SceneManager.LoadScene(0);
+            gameoverPanel.SetActive(true);
         }
+    }
+
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(0);
     }
 
     public void LowerHealth(int value)
@@ -191,12 +196,17 @@ public class GameManager : MonoBehaviour
 
     public void StartNewGame()
     {
+        Time.timeScale = 1;
         mainMenuCanvas.enabled = false;
         gameUICanvas.SetActive(true);
         atMainMenu = false;
         cameraAnim.Play("Game Camera");
         spawner.ToggleEnemySpawn();
     }
+
+    public int GetScore() => score;
+    public int GetHighScore() => highScore;
+
 
     public void IncreaseScore(int value)
     {
@@ -206,7 +216,6 @@ public class GameManager : MonoBehaviour
         {
             highScore = score;
             PlayerPrefs.SetInt("HighScore", highScore);
-            //PlayerPrefs.Save();
         }
 
         scoreText.text = score.ToString("n0");
