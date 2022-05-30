@@ -31,7 +31,6 @@ public class ShieldPowerUp : MonoBehaviour
         if (other.tag == "Shield")
         {
             OnPowerupAquired?.Invoke(duration);
-            //TODO: Add Bonus Shields
             Destroy(gameObject);
         }
     }

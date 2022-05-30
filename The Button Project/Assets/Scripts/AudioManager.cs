@@ -13,17 +13,18 @@ public class AudioManager : MonoBehaviour
     [SerializeField] AudioClip[] enemyDeathSounds; // 0: Button, 1: Shields
     [SerializeField] AudioClip powerupSFX;
 
+    float maxMasterVolume;
+    float maxMusicVolume;
+    float maxSFXVolume;
 
 
     private void Start()
     {
-        StartCoroutine(StartFade(music, 3f, 0.75f));
+        maxMasterVolume = PlayerPrefs.GetFloat("Master Volume");
+        maxMusicVolume = PlayerPrefs.GetFloat("Music Volume");
+        StartCoroutine(StartFade(music, 3f, Mathf.Min(maxMusicVolume, maxMasterVolume)));
     }
 
-    private void Update()
-    {
-
-    }
     private void OnEnable()
     {
         Button.OnButtonClicked += PlayButtonClick;
@@ -81,5 +82,11 @@ public class AudioManager : MonoBehaviour
             yield return null;
         }
         yield break;
+    }
+
+    public void AdjustAudioFromPrefs()
+    {
+        music.volume = Mathf.Min(PlayerPrefs.GetFloat("Master Volume"), PlayerPrefs.GetFloat("Music Volume"));
+        sfx.volume = Mathf.Min(PlayerPrefs.GetFloat("Master Volume"), PlayerPrefs.GetFloat("SFX Volume"));
     }
 }

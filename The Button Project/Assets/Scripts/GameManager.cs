@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject pausePanel;
     [SerializeField] Canvas mainMenuCanvas;
     [SerializeField] GameObject gameUICanvas;
+    [SerializeField] OptionsMenu optionsMenu;
+    [SerializeField] AudioManager audioManager;
     [SerializeField] Image extraLivesPlus;
     [SerializeField] Image lifePips;
     [SerializeField] EnemySpawner spawner;
@@ -26,7 +28,14 @@ public class GameManager : MonoBehaviour
     bool atMainMenu = true;
     int score = 0;
     int highScore;
+
+    // PlayerPrefs
+    public float masterVolumeValue;
+    public float musicVolumeValue;
+    public float sfxVolumeValue;
+    public int difficulty;
     
+
     public static GameManager Instance { get; private set; }
     public bool IsPaused => isPaused;
     
@@ -35,14 +44,15 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        //pausePanel.SetActive(false);
         currentLives = maxLives;
         mainMenuCanvas.enabled = true;
+        audioManager = FindObjectOfType<AudioManager>();
     }
 
     private void OnEnable()
     {
         ShieldPowerUp.OnPowerupAquired += ActivateShieldPowerup;
+        LoadPlayerPrefs();
     }
 
     private void OnDisable()
@@ -55,6 +65,7 @@ public class GameManager : MonoBehaviour
         scoreText.text = score.ToString();
         highScore = PlayerPrefs.GetInt("HighScore");
         highScoreText.text = highScore.ToString("n0");  // Adds comma to seperate 1000s
+        audioManager.AdjustAudioFromPrefs();
     }
 
     private void Update()
@@ -68,14 +79,57 @@ public class GameManager : MonoBehaviour
         //TODO: Delete this after PlayerPrefs stuff is set in stone
         if (Input.GetKeyDown(KeyCode.Backspace))
         {
-            PlayerPrefs.DeleteAll();
-            highScore = 0;
-            highScoreText.text = highScore.ToString("n0");
+            ClearPlayerPrefs();
         }
+    }
+
+    public void ClearPlayerPrefs()
+    {
+        // TODO: Change this to be HighScore only?
+        PlayerPrefs.DeleteAll();
+        highScore = 0;
+        highScoreText.text = highScore.ToString("n0");
+    }
+
+    public void SavePlayerPrefs()
+    {
+        PlayerPrefs.SetFloat("Master Volume", masterVolumeValue);
+        PlayerPrefs.SetFloat("Music Volume", musicVolumeValue);
+        PlayerPrefs.SetFloat("SFX Volume", sfxVolumeValue);
+        PlayerPrefs.SetInt("Difficulty", optionsMenu.GetDifficulty());
+        PlayerPrefs.Save();
+
+        audioManager.AdjustAudioFromPrefs();
+    }
+
+    public void LoadPlayerPrefs()
+    {
+        if (PlayerPrefs.HasKey("Master Volume")
+            && PlayerPrefs.HasKey("Music Volume")
+            && PlayerPrefs.HasKey("SFX Volume")
+            && PlayerPrefs.HasKey("Difficulty"))
+        {
+            masterVolumeValue = PlayerPrefs.GetFloat("Master Volume");
+            musicVolumeValue = PlayerPrefs.GetFloat("Music Volume");
+            sfxVolumeValue = PlayerPrefs.GetFloat("SFX Volume");
+            difficulty = PlayerPrefs.GetInt("Difficulty");
+        }
+        else
+            RestoreDefaultPrefs();
+    }
+
+    public void RestoreDefaultPrefs()
+    {
+        PlayerPrefs.SetFloat("Master Volume", 0.5f);    // 50%
+        PlayerPrefs.SetFloat("Music Volume", 0.5f);     // 50%
+        PlayerPrefs.SetFloat("SFX Volume", 0.5f);       // 50%
+        PlayerPrefs.SetInt("Difficulty", 1);            //Normal
+        
     }
 
     public void ProcessPauseMenu()
     {
+        // TODO: Break this out into it's own script for pause menu
         isPaused = !isPaused;
 
         if (isPaused)
@@ -92,6 +146,7 @@ public class GameManager : MonoBehaviour
 
     private void UpdateGameUI()
     {
+        // TODO Break this out into it's own script
         if (currentLives > maxLives)
             extraLivesPlus.enabled = true;
         else
@@ -123,6 +178,7 @@ public class GameManager : MonoBehaviour
 
     public void QuitTheGame()
     {
+        PlayerPrefs.Save();
         Debug.Log("Quitting game.");
         Application.Quit();
     }
@@ -134,13 +190,6 @@ public class GameManager : MonoBehaviour
         atMainMenu = false;
         cameraAnim.Play("Game Camera");
         spawner.ToggleEnemySpawn();
-    }
-
-    public void OpenOptionsMenu()
-    {
-        // TODO: Implement Options Menu
-
-        Debug.Log("Open Options Menu.");
     }
 
     public void IncreaseScore(int value)
