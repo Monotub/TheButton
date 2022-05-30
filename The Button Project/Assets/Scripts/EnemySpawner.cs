@@ -8,21 +8,47 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] Button button;
 
     [Header("Spawn Customization")]
-    [SerializeField] float spawnDelay = 3f;
     [SerializeField] float minSpawnDistance = 10;
 
-    [Header("Enemy Customization")]
-    [SerializeField] float EnemyMoveSpeed = 5;
+    [Header("Casual Difficulty")]
+    [SerializeField] float casualSpawnDelay = 3f;
+    [SerializeField] float casualEnemyMoveSpeed = 2;
+
+    [Header("Normal Difficulty")]
+    [SerializeField] float normalSpawnDelay = 3f;
+    [SerializeField] float normalEnemyMoveSpeed = 5;
+
+    [Header("Hardcore Difficulty")]
+    [SerializeField] float hardSpawnDelay = 3f;
+    [SerializeField] float hardEnemyMoveSpeed = 5;
 
     Vector3 spawnLocation;
     float spawnY = 0.3f;
-    public bool canSpawnEnemies = false;
-    
+    float spawnDelay;
+    float enemyMoveSpeed;
 
-    private void Start()
+    public bool canSpawnEnemies = false;
+
+
+    private void Update()
     {
-        
-        //StartCoroutine(SpawnEnemiesOnTimer());
+        int difficulty = GameManager.Instance.difficulty;
+
+        switch (difficulty)
+        {
+            case 0:
+                spawnDelay = casualSpawnDelay;
+                enemyMoveSpeed = casualEnemyMoveSpeed;
+                break;
+            case 1:
+                spawnDelay = normalSpawnDelay;
+                enemyMoveSpeed = normalEnemyMoveSpeed;
+                break;
+            case 2:
+                spawnDelay = hardSpawnDelay;
+                enemyMoveSpeed = hardEnemyMoveSpeed;
+                break;
+        }
     }
 
     IEnumerator SpawnEnemiesOnTimer()
@@ -40,7 +66,7 @@ public class EnemySpawner : MonoBehaviour
 
         var newEnemy = Instantiate(enemy, spawnLocation, Quaternion.identity);
         newEnemy.transform.LookAt(button.transform);
-        newEnemy.SetSpeed(EnemyMoveSpeed);
+        newEnemy.SetSpeed(enemyMoveSpeed);
 
         if (Vector3.Distance(newEnemy.transform.position, button.transform.position) < minSpawnDistance)
         {

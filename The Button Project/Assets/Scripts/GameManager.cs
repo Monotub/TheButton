@@ -1,8 +1,8 @@
+using System.Collections;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using UnityEngine;
 using TMPro;
-using UnityEngine.UI;
-using System.Collections;
 
 public class GameManager : MonoBehaviour
 {   
@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] TMP_Text scoreText;
     [SerializeField] TMP_Text highScoreText;
     [SerializeField] GameObject[] powerupShields;
+    [SerializeField] TMP_Text buffText;
 
     [Header("Gameplay Customization")]
     [SerializeField] int currentLives;
@@ -26,6 +27,8 @@ public class GameManager : MonoBehaviour
 
     bool isPaused = false;
     bool atMainMenu = true;
+    bool shieldsActive = false;
+    float shieldTimeLeft;
     int score = 0;
     int highScore;
 
@@ -73,20 +76,23 @@ public class GameManager : MonoBehaviour
         ProcessHealthStuff();
         UpdateGameUI();
 
+        buffText.text = shieldTimeLeft.ToString("n0");
+
+
         if (Input.GetKeyDown(KeyCode.Escape) && !atMainMenu)
             ProcessPauseMenu();
 
-        //TODO: Delete this after PlayerPrefs stuff is set in stone
         if (Input.GetKeyDown(KeyCode.Backspace))
         {
-            ClearPlayerPrefs();
+            ClearHighScore();
         }
+
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+            ActivateShieldPowerup(10);
     }
 
-    public void ClearPlayerPrefs()
+    public void ClearHighScore()
     {
-        // TODO: Change this to be HighScore only?
-        PlayerPrefs.DeleteAll();
         highScore = 0;
         highScoreText.text = highScore.ToString("n0");
     }
@@ -209,17 +215,27 @@ public class GameManager : MonoBehaviour
 
     void ActivateShieldPowerup(float duration)
     {
-        StartCoroutine(ShieldPowerup(duration));
+        if (!shieldsActive)
+            StartCoroutine(ShieldPowerup(duration));
+        else if (shieldsActive)
+            shieldTimeLeft += duration;
     }
 
     public IEnumerator ShieldPowerup(float duration)
     {
         foreach (var shield in powerupShields)
+        {
             shield.SetActive(true);
+            shieldsActive = true;
+        }
 
-        yield return new WaitForSeconds(duration);
+        for(shieldTimeLeft = duration; shieldTimeLeft > 0; shieldTimeLeft -= Time.deltaTime)
+            yield return null;
 
         foreach (var shield in powerupShields)
+        {
             shield.SetActive(false);
+            shieldsActive = false;
+        }
     }
 }

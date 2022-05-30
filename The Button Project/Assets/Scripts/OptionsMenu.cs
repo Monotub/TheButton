@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using System;
 
 public class OptionsMenu : MonoBehaviour
 {
@@ -14,7 +13,6 @@ public class OptionsMenu : MonoBehaviour
     [SerializeField] TMP_Text musicText;
     [SerializeField] TMP_Text sfxText;
     [SerializeField] TMP_Dropdown diffDropdown;
-
 
 
     private void OnEnable()
@@ -69,11 +67,4 @@ public class OptionsMenu : MonoBehaviour
     {
         return diffDropdown.value;
     }
-}
-
-public enum Difficulty
-{
-    Casual, 
-    Normal, 
-    Hardcore
 }

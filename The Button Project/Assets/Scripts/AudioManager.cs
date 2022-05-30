@@ -15,7 +15,6 @@ public class AudioManager : MonoBehaviour
 
     float maxMasterVolume;
     float maxMusicVolume;
-    float maxSFXVolume;
 
 
     private void Start()
